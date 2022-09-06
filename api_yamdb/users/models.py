@@ -9,4 +9,5 @@ class User(AbstractUser):
     )
     role = models.TextField(
         'Role',
+        default='user',
     )
