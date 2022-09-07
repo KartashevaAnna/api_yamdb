@@ -34,6 +34,8 @@ class User(AbstractUser):
         blank=False,
         default='XXXX'
     )
+
+
     @property
     def is_user(self):
         return self.role == USER
