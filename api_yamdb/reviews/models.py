@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Users(AbstractUser):
+class User(AbstractUser):
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -29,10 +29,11 @@ class Titles(models.Model):
     rating = models.IntegerField()
     description = models.CharField("Описание", max_length=300)
     genre = models.ManyToManyField(
-        Genres, on_delete=models.SET_NULL
+        Genres
     )
     category = models.ForeignKey(
-        Categories, on_delete=models.SET_NULL
+        Categories, on_delete=models.SET_NULL,
+        null=True
     )
 
 
@@ -42,7 +43,7 @@ class Review(models.Model):
     )
     text = models.TextField()
     author = models.ForeignKey(
-        Users, on_delete=models.CASCADE
+        User, on_delete=models.CASCADE
     )
     score = models.IntegerField()
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
@@ -54,6 +55,6 @@ class Comments(models.Model):
     )
     text = models.TextField()
     author = models.ForeignKey(
-        Users, on_delete=models.CASCADE
+        User, on_delete=models.CASCADE
     )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
