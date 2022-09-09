@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.views import TokenObtainPairView
 from users.models import User
+from .permissions import IsMyselfOrAdmin
 
 from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 
@@ -23,6 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
     lookup_field = "username"
+    permission_classes = [IsMyselfOrAdmin,]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -35,14 +37,3 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def get_self_page(self, request):
         return self.request.user
-
-
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    def list(self, request):
-        # Note the use of `get_queryset()` instead of `self.queryset`
-        queryset = self.get_queryset()
-        serializer = UserSerializer(queryset, many=True)
-        return Response(serializer.data)
