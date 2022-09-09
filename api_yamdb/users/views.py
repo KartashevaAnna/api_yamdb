@@ -25,6 +25,7 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
+    lookup_field = 'username'
 
     @action(
         detail=False,
