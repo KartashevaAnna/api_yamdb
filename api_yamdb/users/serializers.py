@@ -6,6 +6,7 @@ from rest_framework import exceptions, serializers
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from .models import ROLE_CHOICES
 
 
 class EmailTokenObtainSerializer(TokenObtainSerializer):
@@ -32,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
+    role = serializers.ChoiceField(choices=ROLE_CHOICES)
 
     class Meta:
         model = User

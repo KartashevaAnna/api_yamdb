@@ -2,6 +2,7 @@ from rest_framework import viewsets
 
 from reviews.models import Categories, Genres, Titles
 from .serializers import CategoriesSerializer, GenresSerializer, TitlesSerializer
+from users.permissions import NotModerator
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -12,6 +13,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class GenresViewSet(viewsets.ModelViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
+    permission_classes = [NotModerator,]
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
