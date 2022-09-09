@@ -12,6 +12,9 @@ class Genres(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
+    class Meta:
+        ordering = ("id",)
+
 
 class Titles(models.Model):
     name = models.CharField(max_length=300)
@@ -21,6 +24,9 @@ class Titles(models.Model):
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True)
 
+    class Meta:
+        ordering = ("id",)
+
 
 class Review(models.Model):
     title = models.ForeignKey(Titles, on_delete=models.CASCADE)
@@ -29,9 +35,15 @@ class Review(models.Model):
     score = models.IntegerField()
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
 
+    class Meta:
+        ordering = ("id",)
+
 
 class Comments(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
+
+    class Meta:
+        ordering = ("id",)
