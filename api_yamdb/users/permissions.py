@@ -19,6 +19,7 @@ class NotModerator(permissions.BasePermission):
             or request.user.role != "moderator"
         )
 
+
 class IsAdminUserOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.method in permissions.SAFE_METHODS
