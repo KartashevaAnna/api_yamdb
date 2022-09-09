@@ -3,20 +3,16 @@ from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.response import Response
+from users.models import User
 
-from .serializers import CustomTokenObtainPairSerializer
-from .serializers import RegisterSerializer
+from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 
 
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
-
-from users.models import User
-from .serializers import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -44,6 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
     def list(self, request):
         # Note the use of `get_queryset()` instead of `self.queryset`
         queryset = self.get_queryset()
