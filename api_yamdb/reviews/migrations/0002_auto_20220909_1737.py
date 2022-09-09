@@ -6,27 +6,27 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reviews', '0001_initial'),
+        ("reviews", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='comments',
-            options={'ordering': ('id',)},
+            name="comments",
+            options={"ordering": ("id",)},
         ),
         migrations.AlterModelOptions(
-            name='genres',
-            options={'ordering': ('id',)},
+            name="genres",
+            options={"ordering": ("id",)},
         ),
         migrations.AlterModelOptions(
-            name='review',
-            options={'ordering': ('id',)},
+            name="review",
+            options={"ordering": ("id",)},
         ),
         migrations.AlterModelOptions(
-            name='titles',
-            options={'ordering': ('id',)},
+            name="titles",
+            options={"ordering": ("id",)},
         ),
         migrations.DeleteModel(
-            name='User',
+            name="User",
         ),
     ]

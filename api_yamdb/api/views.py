@@ -1,9 +1,12 @@
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
-
+from rest_framework import viewsets
 from reviews.models import Categories, Genres, Titles
-from .serializers import CategoriesSerializer, GenresSerializer, TitlesSerializer
 from users.permissions import NotModerator, IsAdminUserOrReadOnly
+
+from .serializers import (
+    CategoriesSerializer,
+    GenresSerializer,
+    TitlesSerializer
+)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
