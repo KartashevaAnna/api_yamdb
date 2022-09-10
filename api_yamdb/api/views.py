@@ -1,11 +1,12 @@
-from rest_framework import viewsets
-from reviews.models import Categories, Genres, Titles
+from rest_framework import viewsets, permissions, filters
+from reviews.models import Categories, Genres, Titles, Review
 from users.permissions import NotModerator, IsAdminUserOrReadOnly
 
 from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
-    TitlesSerializer
+    TitlesSerializer,
+    ReviewSerializer
 )
 
 
@@ -31,3 +32,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAdminUserOrReadOnly,
     ]
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer

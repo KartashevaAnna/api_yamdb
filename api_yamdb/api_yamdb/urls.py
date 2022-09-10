@@ -1,4 +1,4 @@
-from api.views import CategoriesViewSet, GenresViewSet, TitlesViewSet
+from api.views import CategoriesViewSet, GenresViewSet, TitlesViewSet, ReviewViewSet
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
@@ -8,6 +8,7 @@ router = routers.DefaultRouter()
 router.register(r"api/v1/categories", CategoriesViewSet)
 router.register(r"api/v1/genres", GenresViewSet)
 router.register(r"api/v1/titles", TitlesViewSet)
+router.register(r"api/v1/reviews", ReviewViewSet)
 
 
 urlpatterns = [

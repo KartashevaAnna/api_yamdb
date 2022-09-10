@@ -29,6 +29,20 @@ class CustomTokenObtainPairSerializer(EmailTokenObtainSerializer):
         return data
 
 
+class RegistrationSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        required=True, validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    email = serializers.EmailField(
+        required=True, validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+
+
+class TokenSerializer(serializers.Serializer):
+       username = serializers.CharField(required=True)
+       confirmation_code = serializers.CharField(required=True)
+
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
