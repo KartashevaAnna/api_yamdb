@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from users.models import User
 
@@ -22,7 +21,10 @@ class Titles(models.Model):
     rating = models.IntegerField()
     description = models.CharField("Описание", max_length=300)
     genre = models.ManyToManyField(Genres)
-    category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(
+        Categories,
+        on_delete=models.SET_NULL, null=True
+    )
 
     class Meta:
         ordering = ("id",)
