@@ -36,6 +36,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True, validators=[UniqueValidator(queryset=User.objects.all())]
     )
+    class Meta:
+        model = User
+        fields = "__all__"
+
 
 
 class TokenSerializer(serializers.Serializer):
