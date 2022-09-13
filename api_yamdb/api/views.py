@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from reviews.models import Categories, Genres, Titles, Review
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
@@ -31,6 +31,9 @@ class GenresViewSet(viewsets.ModelViewSet):
     permission_classes = [
         NotModerator,
     ]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('slug',)
+    lookup_field = 'slug'
 
 
 class TitlesViewSet(viewsets.ModelViewSet):

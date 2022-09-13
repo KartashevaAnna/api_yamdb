@@ -16,7 +16,29 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ('email', 'username')
+
+    def validate_email(self, value):
+        email = value.lower()
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                f'Email {email} is already taken.'
+            )
+        return email
+
+    def validate_username(self, username):
+        username = username.lower()
+        if username == 'me':
+            raise serializers.ValidationError(
+                f'You cannot use "{username}" as username.'
+            )
+        elif User.objects.filter(username=username).exists():
+            raise serializers.ValidationError(
+                f'Username {username} is already in use'
+            )
+        return username
+
+
 
 
 class TokenSerializer(serializers.Serializer):

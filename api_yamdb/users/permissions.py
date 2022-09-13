@@ -38,6 +38,7 @@ class IsMyselfOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS
-            or request.user == self.user or request.user.role == permissions.IsAdminUser
+            or request.user.is_authenticated and request.user == self.user or
+            request.user.is_admin
+            or request.user.is_superuser
         )
-
