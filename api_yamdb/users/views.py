@@ -14,7 +14,8 @@ from users.models import User
 from users.serializers import (
     RegistrationSerializer,
     TokenSerializer,
-    UserSerializer
+    UserSerializer,
+    UserRoleSerializer,
 )
 
 from .permissions import IsMyselfOrAdmin
@@ -44,12 +45,18 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save(data=request.data)
             return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-        # if request.method == "GET":
-        #     user = User.objects.get(id=pk)
-        #     serializer = UserSerializer(user)
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save()
-        #     return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False, methods=['PATCH', 'GET'], url_path='me',
+        permission_classes=[permissions.IsAuthenticated,]
+    )
+    def myself(self, request, pk=None):
+        user = User.objects.get(username=request.user)
+        serializer = UserRoleSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -75,7 +82,7 @@ def signup(request):
 @api_view(['POST'])
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
-    if serializer.is_valid():
+    if serializer.is_valid(raise_exception=True):
         serializer.save()
         user = get_object_or_404(
             User,
