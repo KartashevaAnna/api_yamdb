@@ -1,6 +1,5 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, permissions, filters
 from rest_framework.authtoken.models import Token
@@ -14,7 +13,6 @@ from users.serializers import (
     RegistrationSerializer,
     TokenSerializer,
     UserSerializer,
-    UserRoleSerializer,
 )
 
 from .permissions import IsMyselfOrAdmin, IsAdminOrSuperuser
@@ -26,15 +24,20 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('username',)
+    search_fields = ("username",)
     permission_classes = [IsAdminOrSuperuser]
+
+    def get_default_role(self):
+        if not self.request.user.role:
+            self.request.user.role = "user"
+            return self.request.user.role
 
     @action(
         detail=False,
         methods=["get", "put", "patch", "post"],
         url_path=r"v1/users/(?P<username>[\w.@+-]+)/$",
         url_name="username page",
-        permission_classes=(IsMyselfOrAdmin,)
+        permission_classes=(IsMyselfOrAdmin,),
     )
     def get_self_page(self, request):
         pass
@@ -45,61 +48,64 @@ class UserViewSet(viewsets.ModelViewSet):
         #     serializer.save(data=request.data)
         #     return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
-
     @action(
-        detail=False, methods=['PATCH', 'GET'], url_path='me',
-        permission_classes=[permissions.IsAuthenticated,]
+        detail=False,
+        methods=["PATCH", "GET"],
+        url_path="me",
+        permission_classes=[
+            permissions.IsAuthenticated,
+        ],
     )
     def myself(self, request, pk=None):
         user = User.objects.get(username=request.user)
-        serializer = UserRoleSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes((AllowAny,))
 def signup(request):
     serializer = RegistrationSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
-        user, created = User.objects.get_or_create(
-            username=serializer.validated_data.get('username'),
-            email=serializer.validated_data.get('email')
+        user, _ = User.objects.get_or_create(
+            username=serializer.validated_data.get("username"),
+            email=serializer.validated_data.get("email"),
         )
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
-            'Код подтверждения для регистрации',
+            "Код подтверждения для регистрации",
             confirmation_code,
-            'from@example.com',
+            "from@example.com",
             [user.email],
             fail_silently=False,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes((AllowAny,))
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
         user = get_object_or_404(
-            User,
-            username=serializer.validated_data.get('username')
+            User, username=serializer.validated_data.get("username")
         )
-        username = serializer.validated_data.get('username')
+        username = serializer.validated_data.get("username")
         token = Token.objects.get_or_create(user=request.user)
         if default_token_generator.check_token(
-                user,
-                serializer.validated_data.get('confirmation_code')
+            user, serializer.validated_data.get("confirmation_code")
         ):
             token = AccessToken.for_user(user)
         send_mail(
-            'Тоукен для дальнейших запросов на сайте',
+            "Тоукен для дальнейших запросов на сайте",
             token,
-            'from@example.com',
+            "from@example.com",
             [user.email],
             fail_silently=False,
         )
