@@ -7,7 +7,8 @@ from .views import (
     CategoriesViewSet,
     GenresViewSet,
     TitlesViewSet,
-    ReviewViewSet
+    ReviewViewSet,
+    CommentViewSet,
 )
 
 router = SimpleRouter()
@@ -16,7 +17,7 @@ router.register("v1/users", UserViewSet)
 router.register(r"v1/categories", CategoriesViewSet)
 router.register(r"v1/genres", GenresViewSet)
 router.register(r"v1/titles", TitlesViewSet)
-router.register(r"v1/reviews", ReviewViewSet)
+router.register(r"v1/r'titles/(?P<title_id>\d+)/reviews", ReviewViewSet)
 urlpatterns = [
     url(r"^v1/auth/signup/", signup),
     path("", include(router.urls)),

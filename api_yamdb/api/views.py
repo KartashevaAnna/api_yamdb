@@ -2,7 +2,7 @@ from rest_framework import viewsets, status, filters
 from reviews.models import Categories, Genres, Titles, Review
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
-from reviews.models import Categories, Genres, Titles, Review
+from reviews.models import Categories, Genres, Titles, Review, Comments
 from users.permissions import (
     NotModerator,
     IsAdminUserOrReadOnly,
@@ -13,7 +13,8 @@ from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
     TitlesSerializer,
-    ReviewSerializer
+    ReviewSerializer,
+    CommentsSerializer
 )
 
 
@@ -56,3 +57,7 @@ def my_review(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comments.objects.all()
+    serializer_class = CommentsSerializer

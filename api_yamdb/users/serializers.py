@@ -39,8 +39,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return username
 
 
-
-
 class TokenSerializer(serializers.Serializer):
        username = serializers.CharField(required=True)
        confirmation_code = serializers.CharField(required=True)
@@ -55,3 +53,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
+
+
+class UserRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'role', 'bio', 'first_name', 'last_name'
+        )
+        read_only_fields = ('role',)
