@@ -27,22 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
-    permission_classes = [IsMyselfOrAdmin, permissions.IsAuthenticated]
-
-    def perform_create(self, request):
-        if request.method == "POST":
-            user = self.request.user
-            permission_classes = [IsAdminOrSuperuser,]
-            serializer = RegistrationSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                user, created = User.objects.get_or_create(
-                    username=serializer.validated_data.get('username'),
-                    email=serializer.validated_data.get('email')
-                )
-                return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-            return JsonResponse(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-
+    permission_classes = [IsAdminOrSuperuser]
 
     @action(
         detail=False,
@@ -53,12 +38,12 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def get_self_page(self, request):
         pass
-        # if request.method == "PATCH":
+        # if request.method == "POST":
         #     user = self.request.user
         #     serializer = UserSerializer(data=request.data, partial=True)
         #     serializer.is_valid(raise_exception=True)
         #     serializer.save(data=request.data)
-        #     return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        #     return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
 
     @action(
