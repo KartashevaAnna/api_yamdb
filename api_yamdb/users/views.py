@@ -27,7 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=username',)
+    search_fields = ('username',)
     permission_classes = [IsMyselfOrAdmin,]
 
 
@@ -45,6 +45,12 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save(data=request.data)
             return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == "POST":
+            user = self.request.user
+            serializer = UserSerializer(data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(data=request.data)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=False, methods=['PATCH', 'GET'], url_path='me',
@@ -64,7 +70,7 @@ def signup(request):
     serializer = RegistrationSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
-        user = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             username=serializer.validated_data.get('username'),
             email=serializer.validated_data.get('email')
         )
@@ -73,7 +79,7 @@ def signup(request):
             'Код подтверждения для регистрации',
             confirmation_code,
             'from@example.com',
-            [request.user.email],
+            [user.email],
             fail_silently=False,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
