@@ -80,6 +80,7 @@ def signup(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes((AllowAny,))
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
