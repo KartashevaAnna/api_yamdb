@@ -13,13 +13,13 @@ from .views import (
 
 router = SimpleRouter()
 
-router.register("v1/users", UserViewSet)
-router.register(r"v1/categories", CategoriesViewSet)
-router.register(r"v1/genres", GenresViewSet)
-router.register(r"v1/titles", TitlesViewSet)
-router.register(r"v1/r'titles/(?P<title_id>\d+)/reviews", ReviewViewSet)
+router.register("users", UserViewSet)
+router.register(r"categories", CategoriesViewSet)
+router.register(r"genres", GenresViewSet)
+router.register(r"titles", TitlesViewSet)
+router.register(r"r'titles/(?P<title_id>\d+)/reviews", ReviewViewSet)
 urlpatterns = [
+    path("v1/", include(router.urls)),
     url(r"^v1/auth/signup/", signup),
-    path("", include(router.urls)),
-    path("v1/auth/token/", get_token),
+    url("v1/auth/token/", get_token),
 ]
