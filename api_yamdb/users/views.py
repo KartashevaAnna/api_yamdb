@@ -2,13 +2,12 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status, viewsets, permissions, filters
+from rest_framework import status, viewsets, permissions, filters
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action, permission_classes, api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import AccessToken
 from users.models import User
 from users.serializers import (
@@ -18,7 +17,7 @@ from users.serializers import (
     UserRoleSerializer,
 )
 
-from .permissions import IsMyselfOrAdmin
+from .permissions import IsMyselfOrAdmin, IsAdminOrSuperuser
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -28,8 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
-    permission_classes = [IsMyselfOrAdmin,]
-
+    permission_classes = [IsAdminOrSuperuser]
 
     @action(
         detail=False,
@@ -39,18 +37,14 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsMyselfOrAdmin,)
     )
     def get_self_page(self, request):
-        if request.method == "PATCH":
-            user = self.request.user
-            serializer = UserSerializer(data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(data=request.data)
-            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-        elif request.method == "POST":
-            user = self.request.user
-            serializer = UserSerializer(data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(data=request.data)
-            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        pass
+        # if request.method == "POST":
+        #     user = self.request.user
+        #     serializer = UserSerializer(data=request.data, partial=True)
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save(data=request.data)
+        #     return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+
 
     @action(
         detail=False, methods=['PATCH', 'GET'], url_path='me',
@@ -86,6 +80,7 @@ def signup(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes((AllowAny,))
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
@@ -105,7 +100,7 @@ def get_token(request):
             'Тоукен для дальнейших запросов на сайте',
             token,
             'from@example.com',
-            [request.user.email],
+            [user.email],
             fail_silently=False,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
