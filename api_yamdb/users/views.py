@@ -26,12 +26,9 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("username",)
-    permission_classes = [IsAdminOrSuperuser]
-
-    def get_default_role(self):
-        if not self.request.user.role:
-            self.request.user.role = "user"
-            return self.request.user.role
+    permission_classes = [
+        IsAdminOrSuperuser,
+    ]
 
     @action(
         detail=False,
@@ -100,9 +97,7 @@ def signup(request):
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = get_object_or_404(
-        User, username=serializer.validated_data.get("username")
-    )
+    user = get_object_or_404(User, username=serializer.validated_data.get("username"))
     username = serializer.validated_data.get("username")
     token = Token.objects.get_or_create(user=user)
     if default_token_generator.check_token(

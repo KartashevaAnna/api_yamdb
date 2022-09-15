@@ -37,13 +37,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
+    role = serializers.CharField(default="user", initial="user")
 
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
-    role = serializers.ChoiceField(choices=ROLE_CHOICES)
+    role = serializers.ChoiceField(choices=ROLE_CHOICES, default="user")
 
     class Meta:
         model = User
