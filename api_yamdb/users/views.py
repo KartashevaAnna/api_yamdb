@@ -14,7 +14,6 @@ from users.serializers import (
     RegistrationSerializer,
     TokenSerializer,
     UserSerializer,
-    UserRoleSerializer,
 )
 
 from .permissions import IsMyselfOrAdmin, IsAdminOrSuperuser
@@ -26,80 +25,89 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('username',)
-    permission_classes = [IsAdminOrSuperuser]
+    search_fields = ("username",)
+    permission_classes = [
+        IsAdminOrSuperuser,
+    ]
 
     @action(
         detail=False,
         methods=["get", "put", "patch", "post"],
         url_path=r"v1/users/(?P<username>[\w.@+-]+)/$",
         url_name="username page",
-        permission_classes=(IsMyselfOrAdmin,)
+        permission_classes=(IsAdminOrSuperuser,),
     )
-    def get_self_page(self, request):
-        pass
-        # if request.method == "POST":
-        #     user = self.request.user
-        #     serializer = UserSerializer(data=request.data, partial=True)
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save(data=request.data)
-        #     return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-
+    def get_self_page(self, request, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        if request.method == "GET":
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == "PATCH":
+            serializer = UserSerializer(data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(data=request.data)
+        if request.method == "POST":
+            serializer = UserSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(data=request.data)
+            return JsonResponse(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=False, methods=['PATCH', 'GET'], url_path='me',
-        permission_classes=[permissions.IsAuthenticated,]
+        detail=False,
+        methods=["PATCH", "GET"],
+        url_path="me",
+        permission_classes=[
+            permissions.IsAuthenticated,
+        ],
     )
     def myself(self, request, pk=None):
         user = User.objects.get(username=request.user)
-        serializer = UserRoleSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes((AllowAny,))
 def signup(request):
     serializer = RegistrationSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
-        user, created = User.objects.get_or_create(
-            username=serializer.validated_data.get('username'),
-            email=serializer.validated_data.get('email')
+        user, _ = User.objects.get_or_create(
+            username=serializer.validated_data.get("username"),
+            email=serializer.validated_data.get("email"),
         )
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
-            'Код подтверждения для регистрации',
+            "Confirmation code to complete your registration",
             confirmation_code,
-            'from@example.com',
+            "from@example.com",
             [user.email],
             fail_silently=False,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes((AllowAny,))
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        user = get_object_or_404(
-            User,
-            username=serializer.validated_data.get('username')
-        )
-        username = serializer.validated_data.get('username')
-        token = Token.objects.get_or_create(user=request.user)
-        if default_token_generator.check_token(
-                user,
-                serializer.validated_data.get('confirmation_code')
-        ):
-            token = AccessToken.for_user(user)
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(User, username=serializer.validated_data.get("username"))
+    username = serializer.validated_data.get("username")
+    token = Token.objects.get_or_create(user=user)
+    if default_token_generator.check_token(
+        user, serializer.validated_data.get("confirmation_code")
+    ):
+        token = AccessToken.for_user(user)
         send_mail(
-            'Тоукен для дальнейших запросов на сайте',
+            "Token for further requests at the website",
             token,
-            'from@example.com',
+            "from@example.com",
             [user.email],
             fail_silently=False,
         )
