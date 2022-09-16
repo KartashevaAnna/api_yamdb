@@ -1,22 +1,29 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from rest_framework import viewsets, status, filters
 =======
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters, mixins
 >>>>>>> c9c401a (reviws and comments fix)
 =======
+=======
+>>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 import random
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters, mixins
 from rest_framework.permissions import AllowAny
+<<<<<<< HEAD
 >>>>>>> 4e156e5 (2 fix)
+=======
+>>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 from reviews.models import Categories, Genres, Titles, Review
 from rest_framework.decorators import permission_classes, api_view
 from django.core.mail import send_mail
 from rest_framework.response import Response
 from reviews.models import Categories, Genres, Titles, Review, Comments
 from users.permissions import NotModerator, IsAdminUserOrReadOnly, IsMyselfOrAdmin
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 from .serializers import (
@@ -27,6 +34,8 @@ from .serializers import (
     CommentsSerializer,
 )
 =======
+=======
+>>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 from rest_framework.pagination import PageNumberPagination
 from django.db import models
 
@@ -47,7 +56,10 @@ from .serializers import (
     UserSignupSerializer,
 )
 from .paginations import CustomPagination
+<<<<<<< HEAD
 >>>>>>> c9c401a (reviws and comments fix)
+=======
+>>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 
 
 @api_view(["POST"])
@@ -86,6 +98,7 @@ class GenresViewSet(viewsets.ModelViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
 <<<<<<< HEAD
+<<<<<<< HEAD
     serializer_class = TitlesSerializer
     permission_classes = [
         IsAdminUserOrReadOnly,
@@ -113,6 +126,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comments.objects.all()
     serializer_class = CommentsSerializer
 =======
+=======
+>>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
     serializer_class = WriteTitlesSerializer
     permission_classes = (AdminOrReadOnly)
     pagination_class = CustomPagination
@@ -165,4 +180,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             id=self.kwargs.get('review_id'),
             title_id=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, review=instance)
+<<<<<<< HEAD
 >>>>>>> c9c401a (reviws and comments fix)
+=======
+>>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
