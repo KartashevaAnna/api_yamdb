@@ -1,7 +1,10 @@
+import random
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters, mixins
+from rest_framework.permissions import AllowAny
 from reviews.models import Categories, Genres, Titles, Review
 from rest_framework.decorators import permission_classes, api_view
+from django.core.mail import send_mail
 from rest_framework.response import Response
 from reviews.models import Categories, Genres, Titles, Review, Comments
 from users.permissions import NotModerator, IsAdminUserOrReadOnly, IsMyselfOrAdmin
@@ -21,9 +24,32 @@ from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
     WriteTitlesSerializer,
-    ReadTitlesSerializer
+    ReadTitlesSerializer,
+    UserSignupSerializer,
 )
 from .paginations import CustomPagination
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def user_signup(request):
+    user_code = random.randint(100000, 999999)
+    serializer = UserSignupSerializer(data=request.data)
+
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(confirmation_code=user_code)
+        field_name = serializer.data['username']
+        field_email = serializer.data['email']
+
+        send_mail(
+            'Подтверждение регистрации на сайте api_yamdb',
+            f'Уважаемый {field_name}, пароль регистрации: {user_code}',
+            'admin@yandex.com',
+            [field_email],
+            fail_silently=False,)
+
+        return Response({'email': field_email, 'username': field_name})
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):

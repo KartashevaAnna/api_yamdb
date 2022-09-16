@@ -1,7 +1,27 @@
 import datetime as dt
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
+from users.models import User
 
 from reviews.models import Categories, Genres, Titles, Review, Comments
+
+
+class UserSignupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=('username', 'email'))
+        ]
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Использовать имя "me" в качестве username запрещено!')
+        return value
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
