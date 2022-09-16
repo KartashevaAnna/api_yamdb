@@ -80,8 +80,12 @@ def signup(request):
             username=serializer.validated_data.get("username"),
             email=serializer.validated_data.get("email"),
         )
+<<<<<<< HEAD
         confirmation_code = str(default_token_generator.make_token(user))
         # serializer.save(confirmation_code=confirmation_code)
+=======
+        confirmation_code = default_token_generator.make_token(user)
+>>>>>>> c9c401a (reviws and comments fix)
         send_mail(
             "Confirmation code to complete your registration",
             confirmation_code,
@@ -99,11 +103,20 @@ def get_token(request):
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(User, username=serializer.validated_data.get("username"))
+<<<<<<< HEAD
     token = Token.objects.get_or_create(user=user)
     if default_token_generator.check_token(
         user, str(serializer.validated_data.get("confirmation_code"))
     ):
         token = str(AccessToken.for_user(user))
+=======
+    username = serializer.validated_data.get("username")
+    token = Token.objects.get_or_create(user=user)
+    if default_token_generator.check_token(
+        user, serializer.validated_data.get("confirmation_code")
+    ):
+        token = AccessToken.for_user(user)
+>>>>>>> c9c401a (reviws and comments fix)
         send_mail(
             "Token for further requests at the website",
             token,
@@ -111,5 +124,9 @@ def get_token(request):
             [user.email],
             fail_silently=False,
         )
+<<<<<<< HEAD
         return Response(token, status=status.HTTP_201_CREATED)
+=======
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+>>>>>>> c9c401a (reviws and comments fix)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

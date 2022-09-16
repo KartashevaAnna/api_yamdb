@@ -28,6 +28,10 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "reviews.apps.ReviewsConfig",
     "api.apps.ApiConfig",
+<<<<<<< HEAD
+=======
+    'django_filters',
+>>>>>>> c9c401a (reviws and comments fix)
 ]
 
 MIDDLEWARE = [
@@ -99,6 +103,11 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 5,
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> c9c401a (reviws and comments fix)
 SIMPLE_JWT = {
     # Устанавливаем срок жизни токена
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
