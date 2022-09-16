@@ -111,5 +111,5 @@ def get_token(request):
             [user.email],
             fail_silently=False,
         )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(token, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
