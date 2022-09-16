@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 import datetime as dt
->>>>>>> c9c401a (reviws and comments fix)
-=======
 import datetime as dt
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from users.models import User
@@ -32,21 +26,13 @@ class UserSignupSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     class Meta:
         fields = "__all__"
-=======
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
     lookup_field = 'slug'
 
     class Meta:
         fields = ('name', 'slug')
-<<<<<<< HEAD
->>>>>>> c9c401a (reviws and comments fix)
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
         model = Categories
 
 
@@ -63,8 +49,6 @@ class TitlesSerializer(serializers.ModelSerializer):
         model = Titles
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.StringRelatedField(read_only=True)
     author = serializers.StringRelatedField(
@@ -80,9 +64,8 @@ class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         fields = "__all__"
         model = Comments
-=======
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
+
+
 class ReadTitlesSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField()
     name = serializers.CharField()
@@ -157,9 +140,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'pub_date')
-<<<<<<< HEAD
         model = Comments
->>>>>>> c9c401a (reviws and comments fix)
-=======
-        model = Comments
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
+
