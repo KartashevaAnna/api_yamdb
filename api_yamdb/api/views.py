@@ -50,26 +50,18 @@ from .paginations import CustomPagination
 >>>>>>> c9c401a (reviws and comments fix)
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def user_signup(request):
-    user_code = random.randint(100000, 999999)
-    serializer = UserSignupSerializer(data=request.data)
+@api_view(["POST"])
+@permission_classes((IsMyselfOrAdmin,))
+def my_review(request):
+    serializer = ReviewSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-    if serializer.is_valid(raise_exception=True):
-        serializer.save(confirmation_code=user_code)
-        field_name = serializer.data['username']
-        field_email = serializer.data['email']
 
-        send_mail(
-            'Подтверждение регистрации на сайте api_yamdb',
-            f'Уважаемый {field_name}, пароль регистрации: {user_code}',
-            'admin@yandex.com',
-            [field_email],
-            fail_silently=False,)
-
-        return Response({'email': field_email, 'username': field_name})
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
