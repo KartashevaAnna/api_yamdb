@@ -20,6 +20,6 @@ router.register(r"titles", TitlesViewSet)
 router.register(r"titles/(?P<title_id>\d+)/reviews", ReviewViewSet)
 urlpatterns = [
     path("v1/", include(router.urls)),
-    url(r"^v1/auth/signup/", signup),
-    url("v1/auth/token/", get_token),
+    url(r"^v1/auth/signup", signup),
+    url("v1/auth/token", get_token),
 ]
