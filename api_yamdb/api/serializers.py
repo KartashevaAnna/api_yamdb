@@ -1,8 +1,10 @@
+import datetime
 import datetime as dt
-import datetime as dt
+
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from users.models import User
+from django.core.exceptions import ValidationError
 
 from reviews.models import Categories, Genres, Titles, Review, Comments
 
@@ -26,7 +28,6 @@ class UserSignupSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-
     class Meta:
         fields = "__all__"
     lookup_field = 'slug'
@@ -43,10 +44,47 @@ class GenresSerializer(serializers.ModelSerializer):
         model = Genres
 
 
-class TitlesSerializer(serializers.ModelSerializer):
+class TitlesCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для добавления произведения."""
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Categories.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genres.objects.all(),
+        many=True
+    )
+
     class Meta:
-        fields = "__all__"
         model = Titles
+        fields = '__all__'
+
+    def validate_year(self, value):
+        if value > datetime.datetime.now().year:
+            raise ValidationError(
+                'Неверный год выпуска. Измените дату выхода.'
+            )
+        return value
+
+
+class TitlesReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения произведений."""
+    category = CategoriesSerializer(
+        read_only=True
+    )
+    genre = GenresSerializer(
+        read_only=True,
+        many=True
+    )
+    rating = serializers.IntegerField(
+        read_only=True
+    )
+
+    class Meta:
+        model = Titles
+        fields = '__all__'
+        read_only_fields = ('id',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
