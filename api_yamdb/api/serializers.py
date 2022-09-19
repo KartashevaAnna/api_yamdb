@@ -3,10 +3,10 @@ import datetime as dt
 
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from reviews.models import Categories, Genres, Titles, Review, Comments
+from reviews.models import Category, Genre, Title, Review, Comment
 
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = "__all__"
 
@@ -14,28 +14,28 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ("name", "slug")
-        model = Categories
+        model = Category
 
 
-class GenresSerializer(serializers.ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("name", "slug")
         lookup_field = "slug"
-        model = Genres
+        model = Genre
 
 
-class TitlesCreateSerializer(serializers.ModelSerializer):
+class TitleCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления произведения."""
 
     category = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Categories.objects.all()
+        slug_field="slug", queryset=Category.objects.all()
     )
     genre = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Genres.objects.all(), many=True
+        slug_field="slug", queryset=Genre.objects.all(), many=True
     )
 
     class Meta:
-        model = Titles
+        model = Title
         fields = "__all__"
 
     def validate_year(self, value):
@@ -46,15 +46,15 @@ class TitlesCreateSerializer(serializers.ModelSerializer):
         return value
 
 
-class TitlesReadSerializer(serializers.ModelSerializer):
+class TitleReadSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения произведений."""
 
-    category = CategoriesSerializer(read_only=True)
-    genre = GenresSerializer(read_only=True, many=True)
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(read_only=True, many=True)
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        model = Titles
+        model = Title
         fields = "__all__"
         read_only_fields = ("id",)
 
@@ -73,17 +73,17 @@ class ReviewSerializer(serializers.ModelSerializer):
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         fields = "__all__"
-        model = Comments
+        model = Comment
 
 
-class ReadTitlesSerializer(serializers.ModelSerializer):
+class ReadTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField()
     name = serializers.CharField()
-    genre = GenresSerializer(many=True, read_only=True)
-    category = CategoriesSerializer(read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
 
     class Meta:
-        model = Titles
+        model = Title
         fields = (
             "id",
             "name",
@@ -95,12 +95,12 @@ class ReadTitlesSerializer(serializers.ModelSerializer):
         )
 
 
-class WriteTitlesSerializer(serializers.ModelSerializer):
+class WriteTitleSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
-        queryset=Genres.objects.all(), slug_field="slug", many=True
+        queryset=Genre.objects.all(), slug_field="slug", many=True
     )
     category = serializers.SlugRelatedField(
-        queryset=Categories.objects.all(), slug_field="slug"
+        queryset=Category.objects.all(), slug_field="slug"
     )
     year = serializers.IntegerField()
 
@@ -113,7 +113,7 @@ class WriteTitlesSerializer(serializers.ModelSerializer):
         return value
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ("id", "name", "year", "description", "genre", "category")
 
 
@@ -161,4 +161,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ("id", "text", "author", "pub_date")
-        model = Comments
+        model = Comment
