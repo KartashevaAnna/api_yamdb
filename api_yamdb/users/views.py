@@ -65,9 +65,11 @@ class UserViewSet(viewsets.ModelViewSet):
         user = User.objects.get(username=request.user)
         serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(role=self.request.user.role)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 @api_view(["POST"])

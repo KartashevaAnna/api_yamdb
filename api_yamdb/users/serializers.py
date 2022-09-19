@@ -46,6 +46,9 @@ class UserSerializer(serializers.ModelSerializer):
     )
     role = serializers.ChoiceField(choices=ROLE_CHOICES, default="user")
 
+    # def perform_update(self, serializer):
+    #     serializer.save(role=self.request.user.role)
+
     class Meta:
         model = User
         fields = (

@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
 from reviews.models import Categories, Genres, Titles, Review
 from rest_framework.decorators import permission_classes, api_view
@@ -47,15 +48,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsMyselfOrAdmin,
     ]
+    def get_title(self):
+        return get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
+
+    def get_queryset(self):
+        return Review.objects.filter(title=self.get_title())
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, title=self.get_title())
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user, title=self.get_title())
 
 
-@api_view(["POST"])
-@permission_classes((IsMyselfOrAdmin,))
-def my_review(request):
-    serializer = ReviewSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
