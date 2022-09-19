@@ -104,7 +104,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comments.objects.all()
     serializer_class = WriteTitlesSerializer
-    permission_classes = (AdminOrReadOnly,
+    permission_classes = (AdminOrReadOnly,)
     pagination_class = CustomPagination
     filterset_class = TitleFilter
 

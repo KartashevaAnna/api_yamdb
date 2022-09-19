@@ -28,8 +28,6 @@ class Titles(models.Model):
 
 
 class Review(models.Model):
-<<<<<<< HEAD
-<<<<<<< HEAD
     title = models.ForeignKey(Titles, on_delete=models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -38,49 +36,6 @@ class Review(models.Model):
 
     class Meta:
         ordering = ("id",)
-
-
-class Comments(models.Model):
-    review = models.ForeignKey(Review, on_delete=models.CASCADE)
-    text = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
-
-    class Meta:
-        ordering = ("id",)
-=======
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
-    score = models.PositiveSmallIntegerField()
-    text = models.TextField()
-    title = models.ForeignKey(
-        Titles,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-    pub_date = models.DateTimeField(
-        'Дата добавления',
-        auto_now_add=True,
-        db_index=True
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='review'
-    )
-
-    class Meta:
-        verbose_name = 'Отзыв'
-        verbose_name_plural = 'Отзывы'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['title', 'author'],
-                name='unique review'
-            )
-        ]
-
-    def __str__(self):
-        return self.text
 
 
 class Comments(models.Model):
@@ -103,7 +58,4 @@ class Comments(models.Model):
 
     def __str__(self):
         return self.text
-<<<<<<< HEAD
->>>>>>> c9c401a (reviws and comments fix)
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
+

@@ -9,49 +9,26 @@ from .views import (
     GenresViewSet,
     TitlesViewSet,
     ReviewViewSet,
+    CommentViewSet,
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 router = SimpleRouter()
-
-=======
-
-router = SimpleRouter()
->>>>>>> c9c401a (reviws and comments fix)
-=======
-
-router = SimpleRouter()
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 router.register(r"users", UserViewSet)
 router.register(r"categories", CategoriesViewSet)
 router.register(r"genres", GenresViewSet)
 router.register(r"titles", TitlesViewSet)
-<<<<<<< HEAD
-<<<<<<< HEAD
-router.register(r"titles/(?P<title_id>\d+)/reviews", ReviewViewSet)
-urlpatterns = [
-    path("v1/", include(router.urls)),
-    url(r"^v1/auth/signup", signup),
-    url("v1/auth/token", get_token),
-=======
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 router.register(
     r'titles/(?P<title_id>\d+)/reviews',
     ReviewViewSet,
-    basename='reviews')
+    basename='Reviews')
 router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewSet,
     basename='comments')
 
+
 urlpatterns = [
     path("v1/", include(router.urls)),
     url(r"^v1/auth/signup/", signup),
     url("v1/auth/token/", get_token),
-<<<<<<< HEAD
->>>>>>> c9c401a (reviws and comments fix)
-=======
->>>>>>> fc64b4be4dca67a99ab30710de1758fb511439ce
 ]
