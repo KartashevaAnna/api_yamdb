@@ -5,18 +5,18 @@ from users.views import UserViewSet
 from users.views import signup, get_token
 
 from .views import (
-    CategoriesViewSet,
-    GenresViewSet,
-    TitlesViewSet,
+    CategoryViewSet,
+    GenreViewSet,
+    TitleViewSet,
     ReviewViewSet,
     CommentViewSet,
 )
 
 router = SimpleRouter()
 router.register(r"users", UserViewSet)
-router.register(r"categories", CategoriesViewSet)
-router.register(r"genres", GenresViewSet)
-router.register(r"titles", TitlesViewSet)
+router.register(r"categories", CategoryViewSet)
+router.register(r"genres", GenreViewSet)
+router.register(r"titles", TitleViewSet)
 router.register(
     r"titles/(?P<title_id>\d+)/reviews", ReviewViewSet, basename="Reviews"
 )
