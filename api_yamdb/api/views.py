@@ -94,23 +94,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comments.objects.all()
-    serializer_class = WriteTitlesSerializer
-    permission_classes = (AuthorModeratorOrReadOnly)
-    pagination_class = CustomPagination
-    filterset_class = TitlesFilter
-
-    def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
-            return WriteTitlesSerializer
-        return ReadTitlesSerializer
+    serializer_class = CommentSerializer
+    permission_classes = (AuthorModeratorOrReadOnly,)
 
     def get_queryset(self):
-        new_queryset = Titles.objects.annotate(
-            rating=models.Sum(models.F('reviews__score'))
-            / models.Count(models.F('reviews'))
-        )
-        return new_queryset.order_by('name', 'category', '-year')
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        return review.comments.all()
 
+    def perform_create(self, serializer):
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        serializer.save(author=self.request.user, review=review)
 
 
