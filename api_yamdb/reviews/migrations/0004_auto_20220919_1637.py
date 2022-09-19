@@ -8,36 +8,44 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reviews', '0003_auto_20220916_1632'),
+        ("reviews", "0003_auto_20220916_1632"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='review',
-            options={'ordering': ('id',)},
+            name="review",
+            options={"ordering": ("id",)},
         ),
         migrations.RemoveConstraint(
-            model_name='review',
-            name='unique review',
+            model_name="review",
+            name="unique review",
         ),
         migrations.AlterField(
-            model_name='review',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="review",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='pub_date',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации'),
+            model_name="review",
+            name="pub_date",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Дата публикации"
+            ),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='score',
+            model_name="review",
+            name="score",
             field=models.IntegerField(),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='title',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='reviews.Titles'),
+            model_name="review",
+            name="title",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="reviews.Titles",
+            ),
         ),
     ]

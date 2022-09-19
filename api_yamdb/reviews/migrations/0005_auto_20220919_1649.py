@@ -8,36 +8,50 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reviews', '0004_auto_20220919_1637'),
+        ("reviews", "0004_auto_20220919_1637"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='review',
-            options={'verbose_name': 'Отзыв', 'verbose_name_plural': 'Отзывы'},
+            name="review",
+            options={"verbose_name": "Отзыв", "verbose_name_plural": "Отзывы"},
         ),
         migrations.AlterField(
-            model_name='review',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='review', to=settings.AUTH_USER_MODEL),
+            model_name="review",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="review",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='pub_date',
-            field=models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата добавления'),
+            model_name="review",
+            name="pub_date",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_index=True,
+                verbose_name="Дата добавления",
+            ),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='score',
+            model_name="review",
+            name="score",
             field=models.PositiveSmallIntegerField(),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='title',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='reviews.Titles'),
+            model_name="review",
+            name="title",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="reviews",
+                to="reviews.Titles",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='review',
-            constraint=models.UniqueConstraint(fields=('title', 'author'), name='unique review'),
+            model_name="review",
+            constraint=models.UniqueConstraint(
+                fields=("title", "author"), name="unique review"
+            ),
         ),
     ]

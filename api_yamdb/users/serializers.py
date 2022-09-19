@@ -7,10 +7,12 @@ from .models import User
 
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        required=True, validators=[UniqueValidator(queryset=User.objects.all())]
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())],
     )
     email = serializers.EmailField(
-        required=True, validators=[UniqueValidator(queryset=User.objects.all())]
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())],
     )
 
     class Meta:
@@ -20,7 +22,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         email = value.lower()
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError(f"Email {email} is already taken.")
+            raise serializers.ValidationError(
+                f"Email {email} is already taken."
+            )
         return email
 
     def validate_username(self, username):
@@ -30,7 +34,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
                 f'You cannot use "{username}" as username.'
             )
         elif User.objects.filter(username=username).exists():
-            raise serializers.ValidationError(f"Username {username} is already in use")
+            raise serializers.ValidationError(
+                f"Username {username} is already in use"
+            )
         return username
 
 

@@ -51,7 +51,9 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save(data=request.data)
-            return JsonResponse(serializer.data, status=status.HTTP_204_NO_CONTENT)
+            return JsonResponse(
+                serializer.data, status=status.HTTP_204_NO_CONTENT
+            )
 
     @action(
         detail=False,
@@ -80,11 +82,8 @@ def signup(request):
             username=serializer.validated_data.get("username"),
             email=serializer.validated_data.get("email"),
         )
-    
-        confirmation_code = str(default_token_generator.make_token(user))
-        # serializer.save(confirmation_code=confirmation_code)
-        confirmation_code = default_token_generator.make_token(user)
 
+        confirmation_code = str(default_token_generator.make_token(user))
         confirmation_code = default_token_generator.make_token(user)
 
         send_mail(
@@ -103,7 +102,9 @@ def signup(request):
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = get_object_or_404(User, username=serializer.validated_data.get("username"))
+    user = get_object_or_404(
+        User, username=serializer.validated_data.get("username")
+    )
     token = Token.objects.get_or_create(user=user)
     if default_token_generator.check_token(
         user, str(serializer.validated_data.get("confirmation_code"))
@@ -123,6 +124,4 @@ def get_token(request):
             fail_silently=False,
         )
         return Response(token, status=status.HTTP_201_CREATED)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
