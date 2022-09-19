@@ -1,22 +1,16 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status, filters, mixins
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import AllowAny
+from rest_framework import viewsets, status, filters, mixins
 from rest_framework.decorators import permission_classes, api_view
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from reviews.models import Category, Genre, Title, Review
-
 from users.permissions import (
-    IsAdminUserOrReadOnly,
     IsMyselfOrAdmin,
-    IsAdminOrDeny
 )
-from django.db.models import Avg
 
-from rest_framework.pagination import PageNumberPagination
-
+from .filters import TitlesFilter
 from .permissions import (
     AuthorModeratorOrReadOnly,
     IsAdminOrReadOnly,
@@ -28,10 +22,7 @@ from .serializers import (
     TitleReadSerializer,
     CategorySerializer,
     GenreSerializer,
-    WriteTitleSerializer,
-    ReadTitleSerializer,
 )
-from .filters import TitlesFilter
 
 
 @api_view(["POST"])
@@ -43,8 +34,12 @@ def my_review(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryMixinsViewSet(mixins.CreateModelMixin , mixins.ListModelMixin, mixins.DestroyModelMixin,
-                          viewsets.GenericViewSet):
+class CategoryMixinsViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     pass
 
 
@@ -57,8 +52,13 @@ class CategoryViewSet(CategoryMixinsViewSet):
     search_fields = ("name",)
     lookup_field = "slug"
 
-class GenreMixinsViewSet(mixins.CreateModelMixin , mixins.ListModelMixin, mixins.DestroyModelMixin,
-                          viewsets.GenericViewSet):
+
+class GenreMixinsViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     pass
 
 
@@ -70,7 +70,6 @@ class GenreViewSet(GenreMixinsViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
-
 
 
 class TitleViewSet(viewsets.ModelViewSet):

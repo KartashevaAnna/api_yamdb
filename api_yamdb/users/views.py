@@ -101,14 +101,14 @@ def signup(request):
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = get_object_or_404(User, username=serializer.validated_data.get("username"))
+    user = get_object_or_404(
+        User, username=serializer.validated_data.get("username")
+    )
     token = Token.objects.get_or_create(user=user)
     if default_token_generator.check_token(
         user, str(serializer.validated_data.get("confirmation_code"))
     ):
         token = str(AccessToken.for_user(user))
-        response = {
-            "token": token
-        }
+        response = {"token": token}
         return Response(response, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
