@@ -1,8 +1,5 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
-from reviews.models import Categories, Genres, Titles, Review
-from rest_framework.decorators import permission_classes, api_view
-from rest_framework.response import Response
 from reviews.models import Categories, Genres, Titles, Review, Comments
 from users.permissions import NotModerator, IsAdminUserOrReadOnly, IsMyselfOrAdmin
 
@@ -48,8 +45,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsMyselfOrAdmin,
     ]
+
     def get_title(self):
-        return get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
+        return get_object_or_404(Titles, pk=self.kwargs.get("title_id"))
 
     def get_queryset(self):
         return Review.objects.filter(title=self.get_title())
@@ -59,8 +57,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(author=self.request.user, title=self.get_title())
-
-
 
 
 class CommentViewSet(viewsets.ModelViewSet):

@@ -16,7 +16,7 @@ from users.serializers import (
     UserSerializer,
 )
 
-from .permissions import IsMyselfOrAdmin, IsAdminOrSuperuser
+from .permissions import IsAdminOrSuperuser
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -68,8 +68,6 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save(role=self.request.user.role)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 @api_view(["POST"])
