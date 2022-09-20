@@ -8,13 +8,12 @@ from drf_yasg import openapi
 from django.conf.urls import url
 
 router = routers.DefaultRouter()
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Yamdb API",
-        default_version="v1",
-        description="Documents for Api_yamdb",
-        contact=openapi.Contact(email="annakartashevamail@gmail.com"),
-        license=openapi.License(name="BSD License"),
+schema_view = get_schema_view(openapi.Info(
+    title="Yamdb API",
+    default_version="v1",
+    description="Documents for Api_yamdb",
+    contact=openapi.Contact(email="annakartashevamail@gmail.com"),
+    license=openapi.License(name="BSD License"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
@@ -29,11 +28,10 @@ urlpatterns = [
         name="redoc",
     ),
     path("api/", include("api.urls")),
-    url(
-        r"^swagger(?P<format>\.json|\.yaml)$",
+    url(r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
         name="schema-json",
-    ),
+        ),
     url(
         r"^swagger/$",
         schema_view.with_ui("swagger", cache_timeout=0),
