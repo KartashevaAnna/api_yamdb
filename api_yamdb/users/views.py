@@ -84,7 +84,6 @@ def signup(request):
         )
 
         confirmation_code = str(default_token_generator.make_token(user))
-        confirmation_code = default_token_generator.make_token(user)
 
         send_mail(
             "Confirmation code to complete your registration",
@@ -110,18 +109,6 @@ def get_token(request):
         user, str(serializer.validated_data.get("confirmation_code"))
     ):
         token = str(AccessToken.for_user(user))
-    username = serializer.validated_data.get("username")
-    token = Token.objects.get_or_create(user=user)
-    if default_token_generator.check_token(
-        user, serializer.validated_data.get("confirmation_code")
-    ):
-        token = AccessToken.for_user(user)
-        send_mail(
-            "Token for further requests at the website",
-            token,
-            "from@example.com",
-            [user.email],
-            fail_silently=False,
-        )
-        return Response(token, status=status.HTTP_201_CREATED)
+        response = {"token": token}
+        return Response(response, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
