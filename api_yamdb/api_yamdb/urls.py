@@ -13,7 +13,6 @@ schema_view = get_schema_view(
         title="Yamdb API",
         default_version="v1",
         description="Documents for Api_yamdb",
-        # terms_of_service="URL страницы с пользовательским соглашением",
         contact=openapi.Contact(email="annakartashevamail@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
