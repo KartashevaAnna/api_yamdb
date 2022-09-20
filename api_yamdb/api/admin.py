@@ -16,11 +16,16 @@ class GenreAdmin(admin.ModelAdmin):
 
 
 class TitleAdmin(admin.ModelAdmin):
-    list_display = [
-        field.name
-        for field in Title._meta.get_fields()
-        if not field.many_to_many
-    ]
+    def get_genre(self, obj):
+        return "\n".join([genre.name for genre in obj.genre.all()])
+
+    list_display = (
+        "name",
+        "year",
+        "description",
+        "get_genre",
+        "category",
+    )
     list_filter = ("name", "year", "description")
     empty_value_display = "-empty-"
 
