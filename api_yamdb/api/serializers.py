@@ -25,7 +25,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор для добавления произведения."""
+    """Serializer to add Titles."""
 
     category = serializers.SlugRelatedField(
         slug_field="slug", queryset=Category.objects.all()
@@ -47,7 +47,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
-    """Сериализатор для чтения произведений."""
+    """Serializer to read Titles."""
 
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
@@ -57,64 +57,6 @@ class TitleReadSerializer(serializers.ModelSerializer):
         model = Title
         fields = "__all__"
         read_only_fields = ("id",)
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    title = serializers.StringRelatedField(read_only=True)
-    author = serializers.StringRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault()
-    )
-
-    class Meta:
-        fields = "__all__"
-        model = Review
-
-
-class CommentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = "__all__"
-        model = Comment
-
-
-class ReadTitleSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField()
-    name = serializers.CharField()
-    genre = GenreSerializer(many=True, read_only=True)
-    category = CategorySerializer(read_only=True)
-
-    class Meta:
-        model = Title
-        fields = (
-            "id",
-            "name",
-            "year",
-            "rating",
-            "description",
-            "genre",
-            "category",
-        )
-
-
-class WriteTitleSerializer(serializers.ModelSerializer):
-    genre = serializers.SlugRelatedField(
-        queryset=Genre.objects.all(), slug_field="slug", many=True
-    )
-    category = serializers.SlugRelatedField(
-        queryset=Category.objects.all(), slug_field="slug"
-    )
-    year = serializers.IntegerField()
-
-    def validate_year(self, value):
-        year = dt.date.today().year
-        if not (0 < value <= year):
-            raise serializers.ValidationError(
-                "Год выпуска не может быть больше текущего!"
-            )
-        return value
-
-    class Meta:
-        model = Title
-        fields = ("id", "name", "year", "description", "genre", "category")
 
 
 class CurrentTitleDefault:
