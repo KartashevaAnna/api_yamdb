@@ -14,7 +14,7 @@ schema_view = get_schema_view(openapi.Info(
     description="Documents for Api_yamdb",
     contact=openapi.Contact(email="annakartashevamail@gmail.com"),
     license=openapi.License(name="BSD License"),
-    ),
+),
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
