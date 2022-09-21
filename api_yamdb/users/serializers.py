@@ -4,7 +4,10 @@ from rest_framework.validators import UniqueValidator
 from .models import ROLE_CHOICES
 from .models import User
 
-ROLE = serializers.ChoiceField(choices=ROLE_CHOICES, default="user", initial="user")
+ROLE = serializers.ChoiceField(
+    choices=ROLE_CHOICES, default="user", initial="user"
+)
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(

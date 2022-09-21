@@ -86,9 +86,9 @@ def signup(request):
         )
 
         confirmation_code = str(default_token_generator.make_token(user))
-        message = "Confirmation code to complete your registration",
+        message = ("Confirmation code to complete your registration",)
         from_email = settings.DEFAULT_FROM_EMAIL
-        to_email = (serializer.data['email'],)
+        to_email = (serializer.data["email"],)
         send_mail(
             message,
             confirmation_code,
