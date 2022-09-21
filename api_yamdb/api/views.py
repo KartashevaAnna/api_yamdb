@@ -79,7 +79,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         year = datetime.date.today().year
         if not value <= year:
             raise serializers.ValidationError(
-                'Check the year, it cannot be in the future!'
+                "Check the year, it cannot be in the future!"
             )
         return value
 

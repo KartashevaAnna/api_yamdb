@@ -4,6 +4,7 @@ from rest_framework.validators import UniqueValidator
 from .models import ROLE_CHOICES
 from .models import User
 
+ROLE = serializers.ChoiceField(choices=ROLE_CHOICES, default="user", initial="user")
 
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -19,38 +20,34 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ("email", "username")
 
-    def validate_email(self, value):
-        email = value.lower()
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError(
-                f"Email {email} is already taken."
-            )
-        return email
-
     def validate_username(self, username):
         username = username.lower()
         if username == "me":
             raise serializers.ValidationError(
                 f'You cannot use "{username}" as username.'
             )
-        elif User.objects.filter(username=username).exists():
-            raise serializers.ValidationError(
-                f"Username {username} is already in use"
-            )
         return username
+
+    def validate_username_email(self, username, email):
+        email = email.lower()
+        if User.objects.filter(email=email, username=username).exists():
+            raise serializers.ValidationError(
+                f"User with username {username} and email {email} already exists"
+            )
+        return username, email
 
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
-    role = serializers.CharField(default="user", initial="user")
+    role = ROLE
 
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
-    role = serializers.ChoiceField(choices=ROLE_CHOICES, default="user")
+    role = ROLE
 
     class Meta:
         model = User

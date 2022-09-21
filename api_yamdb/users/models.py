@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.tokens import default_token_generator
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
 
 USER = "user"
 ADMIN = "admin"
@@ -36,7 +34,6 @@ class User(AbstractUser):
         max_length=255,
         null=True,
         blank=False,
-        default="XXXX",
     )
 
     @property
@@ -58,11 +55,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-@receiver(post_save, sender=User)
-def post_save(sender, instance, created, **kwargs):
-    if created:
-        confirmation_code = default_token_generator.make_token(instance)
-        instance.confirmation_code = confirmation_code
-        instance.save()
