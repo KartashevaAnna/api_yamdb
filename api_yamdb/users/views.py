@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.http import JsonResponse
@@ -47,6 +48,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save(data=request.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         if request.method == "POST":
             serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
@@ -84,12 +86,14 @@ def signup(request):
         )
 
         confirmation_code = str(default_token_generator.make_token(user))
-
+        message = "Confirmation code to complete your registration",
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = (serializer.data['email'],)
         send_mail(
-            "Confirmation code to complete your registration",
+            message,
             confirmation_code,
-            "from@example.com",
-            [user.email],
+            from_email,
+            to_email,
             fail_silently=False,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
