@@ -50,7 +50,6 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         verbose_name="Год выпуска",
-        validators=[MaxValueValidator(datetime.datetime.now().year)],
         help_text="Укажите год выпуска произведения",
     )
     description = models.TextField(

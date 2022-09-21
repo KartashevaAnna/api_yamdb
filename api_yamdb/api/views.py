@@ -1,13 +1,15 @@
+import datetime
+
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, status, filters, mixins, serializers
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, filters, mixins
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+
 from reviews.models import Category, Genre, Title, Review
 from users.permissions import IsMyselfOrAdmin
-
 from .filters import TitlesFilter
 from .permissions import (
     IsAuthorModeratorAdminSuperuserOrReadOnly,
@@ -32,7 +34,7 @@ def my_review(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryMixinsViewSet(
+class MyBasicViewset(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,
@@ -41,7 +43,7 @@ class CategoryMixinsViewSet(
     pass
 
 
-class CategoryViewSet(CategoryMixinsViewSet):
+class CategoryViewSet(MyBasicViewset):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination = PageNumberPagination
@@ -51,16 +53,7 @@ class CategoryViewSet(CategoryMixinsViewSet):
     lookup_field = "slug"
 
 
-class GenreMixinsViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
-    pass
-
-
-class GenreViewSet(GenreMixinsViewSet):
+class GenreViewSet(MyBasicViewset):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination = PageNumberPagination
@@ -81,6 +74,14 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminSuperuserOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = TitlesFilter
+
+    def validate_year(self, value):
+        year = datetime.date.today().year
+        if not value <= year:
+            raise serializers.ValidationError(
+                'Check the year, it cannot be in the future!'
+            )
+        return value
 
     def get_serializer_class(self):
         """Selects serializer for the request."""

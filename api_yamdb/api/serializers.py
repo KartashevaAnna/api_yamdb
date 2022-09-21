@@ -7,12 +7,8 @@ from reviews.models import Category, Genre, Title, Review, Comment
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = "__all__"
-
-    lookup_field = "slug"
-
-    class Meta:
         fields = ("name", "slug")
+        lookup_field = "slug"
         model = Category
 
 
@@ -65,7 +61,7 @@ class CurrentTitleDefault:
         return serializer_field.context["view"].kwargs.get("titles_id")
 
     def __repr__(self):
-        return "%s()" % self.__class__.__name__
+        return f"{self.__class__.__name__}"
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -90,7 +86,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Не более одного комментария для произведения"
                 )
-            return data
         return data
 
 

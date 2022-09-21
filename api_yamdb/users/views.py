@@ -9,13 +9,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+
 from users.models import User
 from users.serializers import (
     RegistrationSerializer,
     TokenSerializer,
     UserSerializer,
 )
-
 from .permissions import IsAdminOrSuperuser
 
 
