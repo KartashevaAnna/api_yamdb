@@ -35,7 +35,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         email = email.lower()
         if User.objects.filter(email=email, username=username).exists():
             raise serializers.ValidationError(
-                f"User with username {username} and email {email} already exists"
+                f"User with username {username} and email {email} already "
+                f"exists."
             )
         return username, email
 
