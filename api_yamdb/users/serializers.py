@@ -4,10 +4,6 @@ from rest_framework.validators import UniqueValidator
 from .models import ROLE_CHOICES
 from .models import User, USER
 
-ROLE = serializers.ChoiceField(
-    choices=ROLE_CHOICES, default="user", initial="user"
-)
-
 
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -45,8 +41,8 @@ class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
     role = serializers.ChoiceField(
-    choices=ROLE_CHOICES, default=USER, initial=USER
-)
+        choices=ROLE_CHOICES, default=USER, initial=USER
+    )
 
 
 class UserSerializer(serializers.ModelSerializer):
