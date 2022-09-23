@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "drf_yasg",
-    "users.apps.UsersConfig",
+    "users.apps.UsersAppConfig",
     "reviews.apps.ReviewsConfig",
     "api.apps.ApiConfig",
     "django_filters",
